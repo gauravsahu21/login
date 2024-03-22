@@ -50,22 +50,23 @@ export default function Home() {
                 className={CLASS_MAP.input}
               ></input>
             
-                <label htmlFor="fname">Password:</label>
+                <label htmlFor="password">Password:</label>
                 <input
-                  type="text"
-                  id="fname"
-                  name="fname"
+                  type="password"
+                  id="password"
+                  name="password"
                   className={CLASS_MAP.input}
                 ></input>
             
               {register && (
                 <>
-                  <label htmlFor="fname">Confirm Password:</label>
+                  <label htmlFor="confirmPassword">Confirm Password:</label>
                   <input
-                    type="text"
-                    id="fname"
-                    name="fname"
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
                     className={CLASS_MAP.input}
+                  
                   ></input>
                 </>
               )}

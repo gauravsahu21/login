@@ -2,6 +2,8 @@
 
 import axios from "axios";
 import { useState } from "react";
+import { useRouter } from 'next/navigation'
+
 
 const CLASS_MAP = {
   container: "",
@@ -10,10 +12,13 @@ const CLASS_MAP = {
 };
 
 export default function Home() {
+
+  
   const [register, setRegister] = useState(false);
   const [reset, setReset] = useState(false);
   const [errorMes,setError]=useState("");
 
+  const router = useRouter()
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -32,6 +37,9 @@ export default function Home() {
             password: password,
           },
         });
+        if(user.data.success){
+          setRegister(!register);
+        }
       }else{
       setError("Both password should be same")
 
@@ -49,6 +57,8 @@ export default function Home() {
       if(!data.data.success)
       {
       setError("Email or Password is Incorrect");
+      }else{
+        router.push('/login')
       }
   
     }
@@ -62,7 +72,6 @@ export default function Home() {
       url: `http://localhost:3000/forgot?email=${email}`,
     });
     if(!data.data.success){
-      console.log(data,"^^^^^^^^^^^^^^^^^^^^^^^^")
       setError("No user found with this email")
     }else{
       setReset(!reset)

@@ -14,6 +14,7 @@ export default function Home() {
   const [reset, setReset] = useState(false);
   const [errorMes,setError]=useState("");
 
+
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -37,7 +38,7 @@ export default function Home() {
       }
       
     } else {
-      const user = await axios({
+      const data = await axios({
         method: "post",
         url: "http://localhost:3000/login",
         data: {
@@ -45,6 +46,11 @@ export default function Home() {
           password: password,
         },
       });
+      if(!data.data.success)
+      {
+      setError("Email or Password is Incorrect");
+      }
+  
     }
   }
   async function onReset(event: FormEvent<HTMLFormElement>) {
@@ -55,8 +61,10 @@ export default function Home() {
       method: "get",
       url: `http://localhost:3000/forgot?email=${email}`,
     });
-
-    if(data.status){
+    if(!data.data.success){
+      console.log(data,"^^^^^^^^^^^^^^^^^^^^^^^^")
+      setError("No user found with this email")
+    }else{
       setReset(!reset)
     }
 
@@ -125,6 +133,7 @@ export default function Home() {
                     className="text-blue-500"
                     onClick={(e) => {
                       setRegister(!register);
+                      setError("");
                     }}
                   >
                     Register now
@@ -139,6 +148,7 @@ export default function Home() {
                     className="text-blue-500"
                     onClick={(e) => {
                       setRegister(!register);
+                      setError("");
                     }}
                   >
                     {" "}
@@ -162,6 +172,7 @@ export default function Home() {
                 className={CLASS_MAP.input}
                 required
               ></input>
+              {errorMes.length!=0 &&<span className="text-red-400">{errorMes}</span>}
               <input
                 type="submit"
                 value={
@@ -182,6 +193,7 @@ export default function Home() {
               className="mx-4 "
               onClick={() => {
                 setReset(!reset);
+                setError("");
               }}
             >
               {!reset ? "Reset Password" : "Login Page"}?

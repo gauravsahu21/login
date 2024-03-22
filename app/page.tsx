@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { useState } from "react";
 
 const CLASS_MAP = {
@@ -15,23 +16,40 @@ export default function Home() {
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
+    const email = formData.get("email");
+    const password = formData.get("password");
+    const confirmPassword = formData.get("confirmPassword");
+    if (register) {
+      const user = await axios({
+        method: "post",
+        url: "http://localhost:3000/register",
+        data: {
+          userid: email,
+          password: password,
+        },
+      });
 
-    console.log(formData, "^^^^^^^^^^^^^^^");
-    const value = formData.get("email");
-    console.log(value, "^^^^^^^^^^^^^^");
-    // const errorState = getValidationData({
-    //   formData,
-    //   items,
-    // });
-
-    // if (Object.keys(errorState).length!=0) {
-    //   setErrorState(errorState);
-    // } else {
-    //   setErrorState(errorState);
-    //   updateData({ name, formData, items, jobId });
-    // }
+    } else {
+      const user = await axios({
+        method: "post",
+        url: "http://localhost:3000/login",
+        data: {
+          userid: email,
+          password: password,
+        },
+      });
+    }
   }
-  const handleReset = () => {};
+  async function onReset(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const email = formData.get("email");
+    const user = await axios({
+      method: "get",
+      url: `http://localhost:3000/forgot?email=${email}`,
+    });
+
+  }
 
   return (
     <>
@@ -49,15 +67,15 @@ export default function Home() {
                 name="email"
                 className={CLASS_MAP.input}
               ></input>
-            
-                <label htmlFor="password">Password:</label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  className={CLASS_MAP.input}
-                ></input>
-            
+
+              <label htmlFor="password">Password:</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                className={CLASS_MAP.input}
+              ></input>
+
               {register && (
                 <>
                   <label htmlFor="confirmPassword">Confirm Password:</label>
@@ -66,7 +84,6 @@ export default function Home() {
                     id="confirmPassword"
                     name="confirmPassword"
                     className={CLASS_MAP.input}
-                  
                   ></input>
                 </>
               )}
@@ -115,9 +132,9 @@ export default function Home() {
           </>
         ) : (
           <>
-          <p className="text-2xl">{"Reset"}</p>
-          <form className="flex flex-col space-y-4" onSubmit={onSubmit}>
-          <label htmlFor="email" className="">
+            <p className="text-2xl">{"Reset"}</p>
+            <form className="flex flex-col space-y-4" onSubmit={onReset}>
+              <label htmlFor="email" className="">
                 Email Id:
               </label>
               <input
@@ -141,17 +158,17 @@ export default function Home() {
           </>
         )}
         {!register && (
-              <div className="my-4">
-                <span
-                  className="mx-4 "
-                  onClick={() => {
-                    setReset(!reset);
-                  }}
-                >
-                  {!reset ? "Reset Password" : "Login Page"}?
-                </span>
-              </div>
-            )}
+          <div className="my-4">
+            <span
+              className="mx-4 "
+              onClick={() => {
+                setReset(!reset);
+              }}
+            >
+              {!reset ? "Reset Password" : "Login Page"}?
+            </span>
+          </div>
+        )}
       </div>
     </>
   );

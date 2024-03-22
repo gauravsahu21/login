@@ -38,6 +38,7 @@ export default function Home() {
           },
         });
         if(user.data.success){
+          setError("");
           setRegister(!register);
         }
       }else{

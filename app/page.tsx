@@ -12,6 +12,7 @@ const CLASS_MAP = {
 export default function Home() {
   const [register, setRegister] = useState(false);
   const [reset, setReset] = useState(false);
+  const [errorMes,setError]=useState("");
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -20,15 +21,21 @@ export default function Home() {
     const password = formData.get("password");
     const confirmPassword = formData.get("confirmPassword");
     if (register) {
-      const user = await axios({
-        method: "post",
-        url: "http://localhost:3000/register",
-        data: {
-          userid: email,
-          password: password,
-        },
-      });
+      if(password===confirmPassword)
+      {
+        const user = await axios({
+          method: "post",
+          url: "http://localhost:3000/register",
+          data: {
+            userid: email,
+            password: password,
+          },
+        });
+      }else{
+      setError("Both password should be same")
 
+      }
+      
     } else {
       const user = await axios({
         method: "post",
@@ -44,11 +51,16 @@ export default function Home() {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const email = formData.get("email");
-    const user = await axios({
+    const data = await axios({
       method: "get",
       url: `http://localhost:3000/forgot?email=${email}`,
     });
 
+    if(data.status){
+      setReset(!reset)
+    }
+
+    
   }
 
   return (
@@ -66,6 +78,7 @@ export default function Home() {
                 id="email"
                 name="email"
                 className={CLASS_MAP.input}
+                required
               ></input>
 
               <label htmlFor="password">Password:</label>
@@ -74,6 +87,7 @@ export default function Home() {
                 id="password"
                 name="password"
                 className={CLASS_MAP.input}
+                required
               ></input>
 
               {register && (
@@ -84,9 +98,11 @@ export default function Home() {
                     id="confirmPassword"
                     name="confirmPassword"
                     className={CLASS_MAP.input}
+                    required
                   ></input>
                 </>
               )}
+                {errorMes.length!=0 &&<span className="text-red-400">{errorMes}</span>}
               <input
                 type="submit"
                 value={
@@ -97,7 +113,9 @@ export default function Home() {
                     : "Register"
                 }
                 className="p-3 bg-blue-500 rounded-lg mt-8"
+                required
               ></input>
+            
             </form>
             {!register ? (
               <div className="my-2">
@@ -142,6 +160,7 @@ export default function Home() {
                 id="email"
                 name="email"
                 className={CLASS_MAP.input}
+                required
               ></input>
               <input
                 type="submit"
